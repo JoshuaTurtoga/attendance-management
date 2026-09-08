@@ -1,48 +1,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Color Palette - Dark Premium Theme */
-  --bg-main: #090d16;
-  --bg-surface: #0f172a;
-  --bg-card: rgba(15, 23, 42, 0.75);
-  --bg-card-hover: rgba(30, 41, 59, 0.85);
-  --bg-card-subtle: rgba(30, 41, 59, 0.5);
+  /* Color Palette - University of Bohol Light Theme */
+  --bg-main: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-card-hover: #ffffff;
+  --bg-card-subtle: #f1f5f9;
   
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-focus: rgba(99, 102, 241, 0.5);
-  --border-glow: rgba(99, 102, 241, 0.25);
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-focus: rgba(0, 51, 160, 0.5);
+  --border-glow: rgba(0, 51, 160, 0.15);
   
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
   --text-muted: #64748b;
   
-  /* Brand Accents */
-  --accent-primary: #6366f1;
-  --accent-primary-hover: #4f46e5;
-  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-  --accent-gradient-subtle: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-  --accent-glow: 0 0 25px rgba(99, 102, 241, 0.35);
+  /* Brand Accents (UB Colors) */
+  --accent-primary: #0033a0;
+  --accent-primary-hover: #002266;
+  --accent-gradient: linear-gradient(135deg, #0033a0 0%, #dc2626 100%);
+  --accent-gradient-subtle: linear-gradient(135deg, rgba(0, 51, 160, 0.08), rgba(220, 38, 38, 0.08));
+  --accent-glow: 0 4px 12px rgba(0, 51, 160, 0.15);
 
   /* Status Colors */
-  --status-present: #10b981;
-  --status-present-bg: rgba(16, 185, 129, 0.12);
-  --status-present-border: rgba(16, 185, 129, 0.25);
+  --status-present: #059669;
+  --status-present-bg: rgba(5, 150, 105, 0.1);
+  --status-present-border: rgba(5, 150, 105, 0.2);
 
-  --status-late: #f59e0b;
-  --status-late-bg: rgba(245, 158, 11, 0.12);
-  --status-late-border: rgba(245, 158, 11, 0.25);
+  --status-late: #d97706;
+  --status-late-bg: rgba(217, 119, 6, 0.1);
+  --status-late-border: rgba(217, 119, 6, 0.2);
 
-  --status-absent: #f43f5e;
-  --status-absent-bg: rgba(244, 63, 94, 0.12);
-  --status-absent-border: rgba(244, 63, 94, 0.25);
+  --status-absent: #dc2626;
+  --status-absent-bg: rgba(220, 38, 38, 0.1);
+  --status-absent-border: rgba(220, 38, 38, 0.2);
 
-  --status-excused: #0ea5e9;
-  --status-excused-bg: rgba(14, 165, 233, 0.12);
-  --status-excused-border: rgba(14, 165, 233, 0.25);
+  --status-excused: #2563eb;
+  --status-excused-bg: rgba(37, 99, 235, 0.1);
+  --status-excused-border: rgba(37, 99, 235, 0.2);
 
   /* Glassmorphism & Elevation */
-  --glass-backdrop: blur(16px);
-  --glass-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --glass-backdrop: blur(12px);
+  --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -92,7 +92,7 @@ a {
   left: 20%;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+  background: radial-gradient(circle, rgba(0, 51, 160, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
   filter: blur(60px);
 }
 
@@ -102,7 +102,7 @@ a {
   right: -100px;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
   filter: blur(80px);
 }
 
@@ -119,12 +119,12 @@ a {
 }
 
 .card:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(15, 23, 42, 0.15);
 }
 
 .card-interactive:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.6), var(--accent-glow);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), var(--accent-glow);
   border-color: var(--border-glow);
 }
 
@@ -147,11 +147,11 @@ a {
 .btn-primary {
   background: var(--accent-gradient);
   color: #ffffff;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 15px rgba(0, 51, 160, 0.25);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.55);
+  box-shadow: 0 6px 20px rgba(0, 51, 160, 0.35);
   transform: translateY(-1px);
 }
 
@@ -163,7 +163,7 @@ a {
 
 .btn-secondary:hover {
   background: var(--bg-card-hover);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(15, 23, 42, 0.2);
   transform: translateY(-1px);
 }
 
@@ -226,7 +226,7 @@ a {
 .input-field {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: rgba(15, 23, 42, 0.6);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: var(--text-primary);
@@ -237,7 +237,7 @@ a {
 
 .input-field:focus {
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 51, 160, 0.15);
 }
 
 /* Layout Utilities */
@@ -289,7 +289,7 @@ a {
 }
 
 .data-table th {
-  background: rgba(30, 41, 59, 0.6);
+  background: #f8fafc;
   color: var(--text-secondary);
   padding: 0.85rem 1rem;
   font-weight: 600;
@@ -307,5 +307,5 @@ a {
 }
 
 .data-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: #f1f5f9;
 }

@@ -90,7 +90,7 @@ export default function StudentDashboard() {
           flexWrap: "wrap",
           gap: "1.5rem",
           marginBottom: "2rem",
-          background: "linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%)",
+          backgroundColor: "#ffffff",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
@@ -171,7 +171,7 @@ export default function StudentDashboard() {
                 width: "32px",
                 height: "32px",
                 borderRadius: "8px",
-                backgroundColor: "rgba(99, 102, 241, 0.15)",
+                backgroundColor: "rgba(0, 51, 160, 0.1)",
                 color: "var(--accent-primary)",
                 display: "flex",
                 alignItems: "center",
@@ -299,9 +299,9 @@ export default function StudentDashboard() {
                 <span
                   className="badge"
                   style={{
-                    backgroundColor: "rgba(99, 102, 241, 0.2)",
-                    color: "#818cf8",
-                    border: "1px solid rgba(99, 102, 241, 0.3)",
+                    backgroundColor: "rgba(0, 51, 160, 0.1)",
+                    color: "var(--accent-primary)",
+                    border: "1px solid rgba(0, 51, 160, 0.2)",
                   }}
                 >
                   ● Session Open Now
@@ -345,7 +345,7 @@ export default function StudentDashboard() {
               Synchronized log from Supabase database
             </p>
           </div>
-          <span className="badge" style={{ backgroundColor: "rgba(255, 255, 255, 0.05)", color: "var(--text-secondary)" }}>
+          <span className="badge" style={{ backgroundColor: "rgba(15, 23, 42, 0.05)", color: "var(--text-secondary)" }}>
             Showing last 6 sessions
           </span>
         </div>
@@ -400,7 +400,7 @@ export default function StudentDashboard() {
             left: 0,
             width: "100vw",
             height: "100vh",
-            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            backgroundColor: "rgba(15, 23, 42, 0.6)",
             backdropFilter: "blur(8px)",
             display: "flex",
             alignItems: "center",
@@ -452,7 +452,7 @@ export default function StudentDashboard() {
             <div
               style={{
                 height: "200px",
-                background: "rgba(15, 23, 42, 0.9)",
+                background: "#f1f5f9",
                 borderRadius: "var(--radius-md)",
                 border: "2px dashed var(--accent-primary)",
                 display: "flex",

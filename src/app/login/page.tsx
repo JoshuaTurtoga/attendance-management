@@ -11,8 +11,6 @@ import {
   KeyRound,
   Mail,
   ArrowLeft,
-  Sparkles,
-  Info,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -37,13 +35,6 @@ export default function LoginPage() {
     }, 600);
   };
 
-  const handleDemoLogin = (selectedRole: "student" | "teacher") => {
-    if (selectedRole === "student") {
-      router.push("/dashboard/student");
-    } else {
-      router.push("/dashboard/teacher");
-    }
-  };
 
   return (
     <div
@@ -103,7 +94,7 @@ export default function LoginPage() {
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
               padding: "0.3rem",
-              backgroundColor: "rgba(15, 23, 42, 0.8)",
+              backgroundColor: "#f8fafc",
               border: "1px solid var(--border-subtle)",
               borderRadius: "var(--radius-md)",
               marginBottom: "1.75rem",
@@ -193,10 +184,6 @@ export default function LoginPage() {
                 </label>
                 <a
                   href="#forgot"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert("Password reset will connect with Supabase Auth when configured.");
-                  }}
                   style={{ fontSize: "0.8rem", color: "var(--accent-primary)" }}
                 >
                   Forgot password?
@@ -238,63 +225,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo Instant Access */}
-          <div style={{ margin: "1.75rem 0 1.25rem", textAlign: "center" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.75rem",
-                marginBottom: "1rem",
-              }}
-            >
-              <div style={{ flex: 1, height: "1px", backgroundColor: "var(--border-subtle)" }} />
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                Quick Demo Preview
-              </span>
-              <div style={{ flex: 1, height: "1px", backgroundColor: "var(--border-subtle)" }} />
-            </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin("student")}
-                className="btn btn-secondary btn-sm"
-              >
-                <Sparkles size={14} color="#818cf8" />
-                <span>Demo Student</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin("teacher")}
-                className="btn btn-secondary btn-sm"
-              >
-                <Sparkles size={14} color="#10b981" />
-                <span>Demo Teacher</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Supabase Notice Info Box */}
-          <div
-            style={{
-              padding: "0.75rem 0.85rem",
-              borderRadius: "var(--radius-md)",
-              backgroundColor: "rgba(99, 102, 241, 0.08)",
-              border: "1px solid rgba(99, 102, 241, 0.2)",
-              display: "flex",
-              gap: "0.6rem",
-              alignItems: "flex-start",
-              fontSize: "0.78rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.4,
-            }}
-          >
-            <Info size={16} color="var(--accent-primary)" style={{ flexShrink: 0, marginTop: "2px" }} />
-            <div>
-              <strong>Supabase Auth Ready:</strong> Once you add your Supabase credentials to <code>.env.local</code>, this form will authenticate against your Supabase Auth tables.
-            </div>
-          </div>
         </div>
       </div>
     </div>

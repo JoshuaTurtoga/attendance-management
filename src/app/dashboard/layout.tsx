@@ -13,7 +13,7 @@ export default function DashboardLayout({
         style={{
           borderBottom: "1px solid var(--border-subtle)",
           backdropFilter: "var(--glass-backdrop)",
-          backgroundColor: "rgba(9, 13, 22, 0.85)",
+          backgroundColor: "rgba(248, 250, 252, 0.9)",
           position: "sticky",
           top: 0,
           zIndex: 40,
@@ -25,7 +25,10 @@ export default function DashboardLayout({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            height: "64px",
+            flexWrap: "wrap",
+            minHeight: "64px",
+            padding: "0.5rem 0",
+            gap: "1rem",
           }}
         >
           {/* Brand */}
@@ -50,7 +53,7 @@ export default function DashboardLayout({
             </Link>
 
             {/* View Switcher Pills */}
-            <nav style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <nav style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
               <Link
                 href="/dashboard/student"
                 className="btn btn-secondary btn-sm"
@@ -80,7 +83,7 @@ export default function DashboardLayout({
           </div>
 
           {/* Right Header Controls */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
             <Link
               href="/"
               className="btn btn-secondary btn-sm"

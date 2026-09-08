@@ -146,7 +146,7 @@ export default function TeacherDashboard() {
           flexWrap: "wrap",
           gap: "1.5rem",
           marginBottom: "2rem",
-          background: "linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%)",
+          backgroundColor: "#ffffff",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
@@ -361,7 +361,7 @@ export default function TeacherDashboard() {
                 display: "flex",
                 gap: "0.25rem",
                 padding: "0.25rem",
-                backgroundColor: "rgba(15, 23, 42, 0.8)",
+                backgroundColor: "#f1f5f9",
                 borderRadius: "var(--radius-md)",
                 border: "1px solid var(--border-subtle)",
               }}
@@ -507,7 +507,7 @@ export default function TeacherDashboard() {
             left: 0,
             width: "100vw",
             height: "100vh",
-            backgroundColor: "rgba(0, 0, 0, 0.85)",
+            backgroundColor: "rgba(15, 23, 42, 0.6)",
             backdropFilter: "blur(12px)",
             display: "flex",
             alignItems: "center",
@@ -572,7 +572,7 @@ export default function TeacherDashboard() {
                 padding: "1.5rem",
                 borderRadius: "var(--radius-lg)",
                 display: "inline-block",
-                boxShadow: "0 0 40px rgba(99, 102, 241, 0.4)",
+                boxShadow: "0 4px 12px rgba(0, 51, 160, 0.25)",
                 marginBottom: "1.5rem",
               }}
             >
