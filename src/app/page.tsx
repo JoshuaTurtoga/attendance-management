@@ -5,6 +5,7 @@ import {
   LogIn,
   CheckCircle2,
   ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -114,8 +115,7 @@ export default function HomePage() {
                 marginBottom: "2rem",
               }}
             >
-              Streamline classroom attendance with QR check-in, real-time teacher
-              rosters, and automated absence tracking.
+              A fully digital class record system for universities. Instructors manage classes, attendance, and grades — students join and track their academic progress in real time.
             </p>
 
             <div
@@ -127,22 +127,15 @@ export default function HomePage() {
               }}
             >
               <Link href="/login" className="btn btn-primary" style={{ padding: "0.75rem 1.75rem" }}>
-                <span>Access System</span>
+                <span>Sign In to Your Portal</span>
                 <ArrowRight size={18} />
               </Link>
               <Link
-                href="/dashboard/student"
+                href="/register"
                 className="btn btn-secondary"
                 style={{ padding: "0.75rem 1.75rem" }}
               >
-                <span>Student Preview</span>
-              </Link>
-              <Link
-                href="/dashboard/teacher"
-                className="btn btn-secondary"
-                style={{ padding: "0.75rem 1.75rem" }}
-              >
-                <span>Teacher Preview</span>
+                <span>Student Registration</span>
               </Link>
             </div>
           </div>
@@ -173,16 +166,16 @@ export default function HomePage() {
                 View personal attendance records, check in to active lectures via QR code, track attendance percentages, and monitor streaks.
               </p>
               <Link
-                href="/dashboard/student"
+                href="/login"
                 className="btn btn-secondary"
                 style={{ width: "100%", justifyContent: "space-between" }}
               >
-                <span>Open Student Dashboard</span>
+                <span>Student Login</span>
                 <ArrowRight size={16} />
               </Link>
             </div>
 
-            {/* Teacher Portal Card */}
+            {/* Instructor Portal Card */}
             <div className="card card-interactive" style={{ display: "flex", flexDirection: "column" }}>
               <div
                 style={{
@@ -200,22 +193,22 @@ export default function HomePage() {
                 <Users size={26} />
               </div>
               <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-                Faculty & Teacher Portal
+                Instructor Portal
               </h2>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.5, flex: 1, marginBottom: "1.5rem" }}>
-                Launch class attendance sessions, generate dynamic QR codes, monitor live check-ins, and override or export student attendance logs.
+                Create and manage classes with customizable grade sheets. Record attendance, input grades, generate QR codes, and approve student join requests.
               </p>
               <Link
-                href="/dashboard/teacher"
+                href="/login"
                 className="btn btn-secondary"
                 style={{ width: "100%", justifyContent: "space-between" }}
               >
-                <span>Open Teacher Dashboard</span>
+                <span>Instructor Login</span>
                 <ArrowRight size={16} />
               </Link>
             </div>
 
-            {/* Authentication Card */}
+            {/* Admin Portal Card */}
             <div className="card card-interactive" style={{ display: "flex", flexDirection: "column" }}>
               <div
                 style={{
@@ -230,20 +223,20 @@ export default function HomePage() {
                   marginBottom: "1.25rem",
                 }}
               >
-                <LogIn size={26} />
+                <ShieldCheck size={26} />
               </div>
               <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-                Role-Based Login
+                Admin Portal
               </h2>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.5, flex: 1, marginBottom: "1.5rem" }}>
-                Sign in with school credentials. Includes separate flows for students and faculty.
+                Manage users, oversee all classes, provision instructor accounts, and configure global system settings.
               </p>
               <Link
                 href="/login"
                 className="btn btn-secondary"
                 style={{ width: "100%", justifyContent: "space-between" }}
               >
-                <span>Go to Login Page</span>
+                <span>Admin Login</span>
                 <ArrowRight size={16} />
               </Link>
             </div>
