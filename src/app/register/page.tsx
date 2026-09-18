@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Mail, KeyRound, Eye, EyeOff, UserPlus } from "lucide-react";
+import { signup } from "@/app/auth/actions";
 
-export default function RegisterPage() {
-  const router = useRouter();
+function RegisterPageInner() {
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -14,20 +15,10 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const validateEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
-
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    if (!validateEmail(email)) { setError("Please enter a valid university email address."); return; }
-    if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
-    if (password !== confirm) { setError("Passwords do not match."); return; }
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      router.push("/dashboard/student/onboarding");
-    }, 800);
-  };
+  useEffect(() => {
+    const urlError = searchParams.get("error");
+    if (urlError) setError(urlError);
+  }, [searchParams]);
 
   const strengthScore = (() => {
     let s = 0;
@@ -40,6 +31,19 @@ export default function RegisterPage() {
 
   const strengthLabel = ["", "Weak", "Fair", "Good", "Strong"][strengthScore];
   const strengthColor = ["", "#dc2626", "#d97706", "#2563eb", "#059669"][strengthScore];
+
+  const handleSubmit = async (formData: FormData) => {
+    setError("");
+    // Client-side validation before hitting the server
+    const pw = formData.get("password") as string;
+    const confirmPw = formData.get("confirm") as string;
+    if (pw.length < 8) { setError("Password must be at least 8 characters."); return; }
+    if (pw !== confirmPw) { setError("Passwords do not match."); return; }
+    setLoading(true);
+    await signup(formData);
+    // If signup() didn't redirect (error case), stop loading
+    setLoading(false);
+  };
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", padding: "2rem 1.5rem", position: "relative" }}>
@@ -67,11 +71,11 @@ export default function RegisterPage() {
             </div>
           )}
 
-          <form onSubmit={handleRegister}>
+          <form action={handleSubmit}>
             <div className="input-group">
               <label className="input-label" htmlFor="reg-email">University Email Address</label>
               <div style={{ position: "relative" }}>
-                <input id="reg-email" type="email" required placeholder="e.g. firstname.lastname@ub.edu.ph" value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" style={{ paddingLeft: "2.5rem" }} />
+                <input id="reg-email" name="email" type="email" required placeholder="e.g. firstname.lastname@ub.edu.ph" value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" style={{ paddingLeft: "2.5rem" }} />
                 <Mail size={18} color="var(--text-muted)" style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)" }} />
               </div>
               <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
@@ -82,7 +86,7 @@ export default function RegisterPage() {
             <div className="input-group">
               <label className="input-label" htmlFor="reg-password">Create Password</label>
               <div style={{ position: "relative" }}>
-                <input id="reg-password" type={showPassword ? "text" : "password"} required placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} className="input-field" style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }} />
+                <input id="reg-password" name="password" type={showPassword ? "text" : "password"} required placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} className="input-field" style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }} />
                 <KeyRound size={18} color="var(--text-muted)" style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)" }} />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: "0.85rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", display: "flex" }}>
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -103,7 +107,7 @@ export default function RegisterPage() {
             <div className="input-group">
               <label className="input-label" htmlFor="reg-confirm">Confirm Password</label>
               <div style={{ position: "relative" }}>
-                <input id="reg-confirm" type={showPassword ? "text" : "password"} required placeholder="Re-enter your password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="input-field" style={{ paddingLeft: "2.5rem" }} />
+                <input id="reg-confirm" name="confirm" type={showPassword ? "text" : "password"} required placeholder="Re-enter your password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="input-field" style={{ paddingLeft: "2.5rem" }} />
                 <KeyRound size={18} color={confirm && confirm === password ? "var(--status-present)" : "var(--text-muted)"} style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)" }} />
               </div>
             </div>
@@ -125,5 +129,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>Loading...</div>}>
+      <RegisterPageInner />
+    </Suspense>
   );
 }

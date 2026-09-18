@@ -1,7 +1,20 @@
 import Link from "next/link";
-import { CheckCircle2, LogOut, Home, LayoutDashboard } from "lucide-react";
+import { redirect } from "next/navigation";
+import { CheckCircle2, Home, LayoutDashboard } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { signout } from "@/app/auth/actions";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  // Server-side guard: confirm a valid session exists
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login?error=Please+sign+in+to+continue.");
+  }
+
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       {/* Sticky Top Header */}
@@ -26,9 +39,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Link href="/dashboard" className="btn btn-secondary btn-sm" title="Dashboard">
               <LayoutDashboard size={15} /><span>Dashboard</span>
             </Link>
-            <Link href="/login" className="btn btn-secondary btn-sm" style={{ color: "var(--status-absent)" }} title="Sign Out">
-              <LogOut size={15} /><span>Log Out</span>
-            </Link>
+            {/* Real sign-out using a Server Action */}
+            <form action={signout} style={{ display: "inline" }}>
+              <button
+                type="submit"
+                className="btn btn-secondary btn-sm"
+                style={{ color: "var(--status-absent)", cursor: "pointer" }}
+                title="Sign Out"
+              >
+                <span>Log Out</span>
+              </button>
+            </form>
           </div>
         </div>
       </header>

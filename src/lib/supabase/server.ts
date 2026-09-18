@@ -18,6 +18,9 @@ export async function createClient() {
   const validKey = supabaseAnonKey || "placeholder-anon-key";
 
   return createServerClient(validUrl, validKey, {
+    global: {
+      fetch: (url, init) => fetch(url, { ...init, cache: 'no-store' })
+    },
     cookies: {
       getAll() {
         return cookieStore.getAll();

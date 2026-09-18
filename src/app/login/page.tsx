@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   LogIn,
   CheckCircle2,
@@ -14,11 +14,13 @@ import {
   EyeOff,
   RefreshCw,
 } from "lucide-react";
+import { login } from "@/app/auth/actions";
+import { createClient } from "@/lib/supabase/client";
 
 type LoginStep = "login" | "forgot-email" | "forgot-otp" | "forgot-reset" | "done";
 
-export default function LoginPage() {
-  const router = useRouter();
+function LoginPageInner() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<LoginStep>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,26 +30,29 @@ export default function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    if (!email || !password) { setError("Please enter your email and password."); return; }
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      if (email.startsWith("admin")) router.push("/dashboard/admin");
-      else if (email.startsWith("instr") || email.startsWith("prof") || email.startsWith("dr")) router.push("/dashboard/instructor");
-      else router.push("/dashboard/student");
-    }, 700);
-  };
+  useEffect(() => {
+    const urlError = searchParams.get("error");
+    const urlMessage = searchParams.get("message");
+    if (urlError) setError(urlError);
+    if (urlMessage) setMessage(urlMessage);
+  }, [searchParams]);
 
-  const handleSendOtp = (e: React.FormEvent) => {
+  // ── Password Recovery via Supabase OTP ─────────────────────────────────
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (!email) { setError("Please enter your registered email."); return; }
     setLoading(true);
-    setTimeout(() => { setLoading(false); setStep("forgot-otp"); }, 800);
+    const supabase = createClient();
+    const { error: otpError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+    setLoading(false);
+    if (otpError) { setError(otpError.message); return; }
+    setStep("done");
+    setMessage("A password reset link has been sent to your email.");
   };
 
   const handleVerifyOtp = (e: React.FormEvent) => {
@@ -58,13 +63,18 @@ export default function LoginPage() {
     setTimeout(() => { setLoading(false); setStep("forgot-reset"); }, 600);
   };
 
-  const handleResetPassword = (e: React.FormEvent) => {
+  const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (newPassword.length < 8) { setError("Password must be at least 8 characters."); return; }
     if (newPassword !== confirmPassword) { setError("Passwords do not match."); return; }
     setLoading(true);
-    setTimeout(() => { setLoading(false); setStep("done"); }, 800);
+    const supabase = createClient();
+    const { error: resetError } = await supabase.auth.updateUser({ password: newPassword });
+    setLoading(false);
+    if (resetError) { setError(resetError.message); return; }
+    setStep("done");
+    setMessage("Your password has been updated. You can now sign in.");
   };
 
   return (
@@ -75,7 +85,7 @@ export default function LoginPage() {
             <ArrowLeft size={16} /><span>Back to Home</span>
           </Link>
         ) : step !== "done" ? (
-          <button type="button" onClick={() => { setStep("login"); setError(""); }} className="btn btn-secondary btn-sm" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+          <button type="button" onClick={() => { setStep("login"); setError(""); setMessage(""); }} className="btn btn-secondary btn-sm" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
             <ArrowLeft size={16} /><span>Back to Login</span>
           </button>
         ) : null}
@@ -91,14 +101,14 @@ export default function LoginPage() {
             {step === "forgot-email" && "Forgot Password"}
             {step === "forgot-otp" && "Enter OTP"}
             {step === "forgot-reset" && "Set New Password"}
-            {step === "done" && "Password Reset!"}
+            {step === "done" && "Check Your Email"}
           </h1>
           <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: "0.35rem" }}>
             {step === "login" && "Sign in to your account"}
-            {step === "forgot-email" && "Enter your registered email to receive an OTP"}
+            {step === "forgot-email" && "Enter your registered email to receive a reset link"}
             {step === "forgot-otp" && `We sent a 6-digit code to ${email}`}
             {step === "forgot-reset" && "Create your new secure password"}
-            {step === "done" && "Your password has been updated successfully"}
+            {step === "done" && message}
           </p>
         </div>
 
@@ -108,25 +118,37 @@ export default function LoginPage() {
               {error}
             </div>
           )}
+          {message && !error && (
+            <div style={{ padding: "0.75rem 1rem", borderRadius: "var(--radius-md)", backgroundColor: "var(--status-present-bg)", border: "1px solid var(--status-present-border)", color: "var(--status-present)", fontSize: "0.85rem", marginBottom: "1.25rem" }}>
+              {message}
+            </div>
+          )}
 
           {step === "login" && (
-            <form onSubmit={handleLogin}>
+            <form action={async (formData) => {
+              setError("");
+              setMessage("");
+              setLoading(true);
+              await login(formData);
+              // If login() didn't redirect (error), loading stays true until the page redirects
+              // so we don't need to setLoading(false) — the page will navigate away
+            }}>
               <div className="input-group">
                 <label className="input-label" htmlFor="login-email">Email Address</label>
                 <div style={{ position: "relative" }}>
-                  <input id="login-email" type="email" required placeholder="e.g. student@ub.edu.ph" value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" style={{ paddingLeft: "2.5rem" }} />
+                  <input id="login-email" name="email" type="email" required placeholder="e.g. student@ub.edu.ph" value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" style={{ paddingLeft: "2.5rem" }} />
                   <Mail size={18} color="var(--text-muted)" style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)" }} />
                 </div>
               </div>
               <div className="input-group">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <label className="input-label" htmlFor="login-password">Password</label>
-                  <button type="button" onClick={() => { setStep("forgot-email"); setError(""); }} style={{ fontSize: "0.8rem", color: "var(--accent-primary)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                  <button type="button" onClick={() => { setStep("forgot-email"); setError(""); setMessage(""); }} style={{ fontSize: "0.8rem", color: "var(--accent-primary)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
                     Forgot password?
                   </button>
                 </div>
                 <div style={{ position: "relative" }}>
-                  <input id="login-password" type={showPassword ? "text" : "password"} required placeholder="••••••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="input-field" style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }} />
+                  <input id="login-password" name="password" type={showPassword ? "text" : "password"} required placeholder="••••••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="input-field" style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }} />
                   <KeyRound size={18} color="var(--text-muted)" style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)" }} />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: "0.85rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", display: "flex" }}>
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -153,7 +175,7 @@ export default function LoginPage() {
                 </div>
               </div>
               <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: "100%", padding: "0.8rem" }}>
-                {loading ? <span>Sending OTP...</span> : <><Shield size={18} /><span>Send OTP to Email</span></>}
+                {loading ? <span>Sending...</span> : <><Shield size={18} /><span>Send Reset Link</span></>}
               </button>
             </form>
           )}
@@ -206,9 +228,9 @@ export default function LoginPage() {
                 <CheckCircle2 size={32} color="var(--status-present)" />
               </div>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
-                You can now sign in with your new password.
+                {message || "Check your inbox for next steps."}
               </p>
-              <button type="button" onClick={() => { setStep("login"); setPassword(""); setOtp(""); setNewPassword(""); setConfirmPassword(""); }} className="btn btn-primary" style={{ width: "100%", padding: "0.8rem" }}>
+              <button type="button" onClick={() => { setStep("login"); setPassword(""); setOtp(""); setNewPassword(""); setConfirmPassword(""); setMessage(""); }} className="btn btn-primary" style={{ width: "100%", padding: "0.8rem" }}>
                 <LogIn size={18} /><span>Go to Login</span>
               </button>
             </div>
@@ -216,5 +238,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>Loading...</div>}>
+      <LoginPageInner />
+    </Suspense>
   );
 }
