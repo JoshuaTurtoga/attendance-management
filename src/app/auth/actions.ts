@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -39,21 +40,27 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const supabase = await createClient();
-
-  const email = formData.get("email") as string;
+  const email = (formData.get("email") as string)?.trim().toLowerCase();
   const password = formData.get("password") as string;
 
-  const { error } = await supabase.auth.signUp({ email, password });
+  if (!email || !password) {
+    redirect("/register?error=Email+and+password+are+required");
+  }
+
+  // Create user with email_confirm: true so student accounts are immediately active and can log in
+  const adminClient = createAdminClient();
+  const { error } = await adminClient.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
 
   if (error) {
     redirect(`/register?error=${encodeURIComponent(error.message)}`);
   }
 
   revalidatePath("/", "layout");
-  // After signup, Supabase sends a confirmation email.
-  // Redirect to a confirmation notice page.
-  redirect("/login?message=Check+your+email+to+confirm+your+account");
+  redirect("/login?message=Account+created+successfully!+You+can+now+sign+in.");
 }
 
 export async function signout() {

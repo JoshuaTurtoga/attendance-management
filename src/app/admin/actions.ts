@@ -154,35 +154,23 @@ export async function deleteUser(userId: string) {
   return { success: true, message: 'User deleted successfully.' }
 }
 
-// ─── Change User Role ─────────────────────────────────────────────────────────
-export async function updateUserRole(userId: string, role: 'admin' | 'instructor' | 'student') {
-  console.log(`[updateUserRole] Attempting to change role for user ${userId} to ${role}`);
+// ─── Confirm User Account ─────────────────────────────────────────────────────
+export async function confirmUser(userId: string) {
   try {
-    const { adminClient, supabase } = await requireAdmin()
-    console.log(`[updateUserRole] requireAdmin passed`);
+    const { adminClient } = await requireAdmin()
 
-    // Server-side guard: prevent an admin from changing their own role
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user?.id === userId) {
-      console.log(`[updateUserRole] Blocked self-role change`);
-      return { success: false, message: 'You cannot change your own role.' }
-    }
-
-    const { data, error } = await adminClient
-      .from('user_roles')
-      .upsert({ id: userId, role })
-      .select()
+    const { error } = await adminClient.auth.admin.updateUserById(userId, {
+      email_confirm: true,
+    })
 
     if (error) {
-      console.error(`[updateUserRole] Upsert error:`, error);
       return { success: false, message: error.message }
     }
 
-    console.log(`[updateUserRole] Upsert success:`, data);
     revalidatePath('/dashboard/admin/users')
-    return { success: true, message: 'Role updated successfully.' }
+    return { success: true, message: 'User account confirmed successfully.' }
   } catch (err: any) {
-    console.error(`[updateUserRole] Caught exception:`, err);
-    return { success: false, message: err.message || 'An unexpected error occurred.' }
+    return { success: false, message: err.message || 'Failed to confirm user account.' }
   }
 }
+

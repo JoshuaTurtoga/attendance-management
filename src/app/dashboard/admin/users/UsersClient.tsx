@@ -3,13 +3,13 @@
 import { useState, useTransition } from "react";
 import {
   Plus, Search, Trash2, UserCheck, X, Mail, KeyRound,
-  User, Loader2, ShieldCheck, GraduationCap, Users,
+  User, Loader2, ShieldCheck, GraduationCap, Users, CheckCircle2,
 } from "lucide-react";
 import {
   createInstructor,
   createStudent,
   deleteUser,
-  updateUserRole,
+  confirmUser,
 } from "@/app/admin/actions";
 
 type AppRole = "admin" | "instructor" | "student";
@@ -100,12 +100,12 @@ export default function UsersClient({ initialUsers, currentUserId }: { initialUs
     });
   };
 
-  const handleRoleChange = (userId: string, newRole: AppRole) => {
+  const handleConfirmUser = (userId: string) => {
     startTransition(async () => {
-      const result = await updateUserRole(userId, newRole);
+      const result = await confirmUser(userId);
       if (result.success) {
-        setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, role: newRole } : u));
-        showToast("Role updated.", true);
+        setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, emailConfirmed: true } : u));
+        showToast("Account confirmed successfully.", true);
       } else {
         showToast(result.message, false);
       }
@@ -210,30 +210,52 @@ export default function UsersClient({ initialUsers, currentUserId }: { initialUs
                     <td style={{ fontWeight: 600 }}>{u.name}</td>
                     <td style={{ color: "var(--text-secondary)", fontFamily: "monospace", fontSize: "0.82rem" }}>{u.email}</td>
                     <td>
-                      <div title={u.id === currentUserId ? "You cannot change your own role" : undefined} style={{ display: "inline-block" }}>
-                      <select
-                        value={u.role}
-                        onChange={(e) => handleRoleChange(u.id, e.target.value as AppRole)}
-                        disabled={isPending || u.id === currentUserId}
+                      <span
                         style={{
-                          padding: "0.25rem 0.5rem", borderRadius: "999px", fontSize: "0.78rem",
-                          fontWeight: 700, border: `1px solid ${cfg.color}30`,
-                          backgroundColor: cfg.bg, color: cfg.color,
-                          cursor: u.id === currentUserId ? "not-allowed" : "pointer",
-                          outline: "none",
-                          opacity: u.id === currentUserId ? 0.55 : 1,
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.35rem",
+                          padding: "0.25rem 0.65rem",
+                          borderRadius: "999px",
+                          fontSize: "0.78rem",
+                          fontWeight: 700,
+                          border: `1px solid ${cfg.color}30`,
+                          backgroundColor: cfg.bg,
+                          color: cfg.color,
                         }}
                       >
-                        <option value="admin">Admin</option>
-                        <option value="instructor">Instructor</option>
-                        <option value="student">Student</option>
-                      </select>
-                    </div>
+                        {cfg.icon}
+                        {cfg.label}
+                      </span>
                     </td>
                     <td>
-                      <span className={`badge ${u.emailConfirmed ? "badge-present" : "badge-late"}`}>
-                        {u.emailConfirmed ? "Confirmed" : "Pending"}
-                      </span>
+                      {u.emailConfirmed ? (
+                        <span className="badge badge-present">Confirmed</span>
+                      ) : (
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                          <span className="badge badge-late">Pending</span>
+                          <button
+                            type="button"
+                            className="btn btn-secondary btn-sm"
+                            style={{
+                              padding: "0.2rem 0.55rem",
+                              fontSize: "0.75rem",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.3rem",
+                              borderColor: "var(--status-present-border)",
+                              color: "var(--status-present)",
+                              backgroundColor: "var(--status-present-bg)",
+                              cursor: "pointer",
+                            }}
+                            disabled={isPending}
+                            title="Confirm and activate account"
+                            onClick={() => handleConfirmUser(u.id)}
+                          >
+                            <CheckCircle2 size={12} /> Confirm
+                          </button>
+                        </div>
+                      )}
                     </td>
                     <td style={{ color: "var(--text-muted)", fontSize: "0.82rem" }}>
                       {new Date(u.createdAt).toLocaleDateString()}
